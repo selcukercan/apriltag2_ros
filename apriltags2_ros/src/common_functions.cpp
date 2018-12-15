@@ -555,6 +555,7 @@ Eigen::Vector3d Quaterniond2Euler(const double x,const double y,const double z,c
     // Note that April Tag returns passive rotation from tag to camera.
 
     // printf("Remark: from the tag frame to the camera frame (rotate camera )\n");
+    /*
     printf("+++++++++++++++++++++++++++++++++ \n");
     printf("Returned Rotation \n");
     printf("Quaternions x:%lf  ,y:%lf ,z:%lf, w:%lf \n",x,y,z,w);
@@ -566,6 +567,7 @@ Eigen::Vector3d Quaterniond2Euler(const double x,const double y,const double z,c
     printf("Quaterniond2Euler ZYX x:%lf degree ,y:%lf degree ,z:%lf degree\n",euler_inv_zyx[2] * rad2deg, euler_inv_zyx[1] * rad2deg, euler_inv_zyx[0] * rad2deg);
     printf("Quaterniond2Euler XYZ x:%lf degree ,y:%lf degree ,z:%lf degree\n",euler_inv_xyz[2] * rad2deg, euler_inv_xyz[1] * rad2deg, euler_inv_xyz[0] * rad2deg);
     printf("+++++++++++++++++++++++++++++++++ \n\n");
+    */
 }
 
 void rotationTransform(double x,double y ,double z , double w )
@@ -581,7 +583,7 @@ rz = float(atan2( 2 * (q1*q2 + q0*q3), (q0*q0 + q1*q1 - q2*q2 - q3*q3)));
 rx*=180.0/3.141592653589793;
 ry*=180.0/3.141592653589793;
 rz*=180.0/3.141592653589793;
-printf("rotationTransform x:%lf degree ,y:%lf degree ,z:%lf degree\n\n",rx,ry,rz);
+// printf("rotationTransform x:%lf degree ,y:%lf degree ,z:%lf degree\n\n",rx,ry,rz);
 }
 
 
