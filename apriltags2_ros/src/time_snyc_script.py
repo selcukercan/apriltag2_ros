@@ -1,5 +1,4 @@
 import rosbag
-import rospy
 from shutil import copy
 
 input_base = "/home/selcuk/save_test9"
@@ -9,36 +8,32 @@ output_bag = input_base + "_synced.bag"
 
 copy(input_bag, input_backup_bag)
 
-t_start_compressed = None
+t_compressed = []
+t_tag_detectons = []
+
 top_compressed_image = "/mete/camera_node/image/compressed"
 top_tag_detections = "/mete/apriltags2_ros/publish_detections_in_local_frame/tag_detections_local_frame"
 
-topics2save = []
+# record the ros times of compressed_image and tag_detections topics into a list
 for topic, msg, t in rosbag.Bag(input_bag).read_messages():
-    # This also replaces tf timestamps under the assumption
-    # that all transforms in the message share the same timestamp
     if topic == top_compressed_image:
-        #t_start_compressed = msg.header.stamp
-        t_start_compressed = t
-        break
+        t_compressed.append(t)
+    elif topic == top_tag_detections:
+        t_tag_detectons.append(t)
 
-get_dt = False
+# make sure they are in ascending order
+t_compressed.sort()
+t_tag_detectons.sort()
+
+# t_tag_detections: keys, t_compressed: values
+dict = dict(zip(t_tag_detectons, t_compressed))
+
+# read the values from the input bag and replace the ros time of the tag_detections
+# to match to that of the compressed_image.
 with rosbag.Bag(output_bag, 'w') as outbag:
     for topic, msg, t in rosbag.Bag(input_bag).read_messages():
         if topic == top_tag_detections:
-            print "caught"
-
-        if topic == top_tag_detections:
-            if not get_dt:
-                d = t - t_start_compressed
-                dt = rospy.Time(d.secs, d.nsecs)
-                get_dt = True
-
-            norm_d = t - dt
-            target_t = rospy.Time(norm_d.secs, norm_d.nsecs)
-            outbag.write(topic, msg, target_t)
-
+            outbag.write(topic, msg, dict[t])
         else:
             outbag.write(topic, msg, t)
-
 print 'finished'
